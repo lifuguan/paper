@@ -1,5 +1,5 @@
 \documentclass[UTF8]{article} % chinese
-\usepackage{ctex}
+% \usepackage{ctex}
 %\documentclass{article}     %english
 %\usepackage[nonatbib]{neurips}
 \usepackage[final]{aneurips}
@@ -52,140 +52,142 @@ Graph Neural Networks (GNN) is an emerging field for learning on non-Euclidean d
 ~\\
 \end{abstract}
 
-\section{Introduction}
-Recently, the field of Graph Neural Network has drawn increasing attention due to its wide range of applications such  as social analysis, biology, recommendation system, and computer vision. Graph Neural Network (GCN) adopts a message-passing approach and gathers information from the neighbors of each node from the previous layer to form new representation. The vanilla GCN uses a full-batch training process and stores each node's representation in the GPU memory, which leads to limited scalability. On the other hand, training GCN with mini-batches is difficult, as the neighborhood size could grow exponentially with the number of layers.
-
-论文所处的背景
-~\\
-~\\
-~\\
-
-
-当前的现状？
-~\\
-~\\
-~\\
-
-本文所做的主要工作和贡献
-~\\
-~\\
-~\\
-
-\paragraph{Our contribution.} In this paper, we first carefully analyze the theoretical complexity of existing scalable GNNs and explain why they cannot scale to graphs with billions of edges. Then, we present GBP (Graph neural network via Bidirectional Propagation), a scalable Graph Neural Network with sub-linear time complexity in theory and superior performance in practice. 
-
-~\\
-~\\
-~\\
-
-\section{Related work}
-\subsection{Work1}
-
-~\\
-~\\
-~\\
-
-\subsection{Work2}
-
-~\\
-~\\
-~\\
-
-\subsection{Work3}
-
-~\\
-~\\
-~\\
-
-\section{Proposed Method}
-
-这里是论文最重要的部分，描述自己的方法。
-~\\
-~\\
-~\\
-
-\subsection{Analysis}\label{sec:analysis}
-~\\
-~\\
-~\\
-
-
 \section{Experiments}
-\paragraph{Datasets} 
+\subsection{Baseline and implementation}
+We used a server equipped with an Intel Core i9-9980XE CPU @ 3.00GHz with 64GB RAM and 12GB of RTX2080Ti GPU for
+our proposed networks training. The operating system of the sever is 64-bits Ubuntu 18.04. The structure of the network 
+is implemented under the open source deep learning library Pytorch with VSCode implementation.
+
+\subsection{Dataset}
+For this study, we conduct our experiments on four differents segmentation tasks. 
+Covering lesions/organs from most commonly used medical imaging modalities including microscopy, 
+computed tomography (CT), and magnetic resonance imaging (MRI).  Table \ref{dataset-table} summarize those datasets in our study.
 
 \begin{table}[ht]
-\vspace{-4mm}
-\begin{center}\small
-\caption{Dataset statistics.}
-\label{dataset-table}
-\begin{tabular}{llrrrrr}
-\toprule
-Dataset & Task & Nodes & Edges & Features & Classes &  Label rate \\
-\midrule
-Cora & multi-class & 2,708 & 5,429      & 1,433         & 7 & 0.052            \\
-Citeseer    & multi-class& 3,327       & 4,732       & 3,703   & 6 & 0.036     \\
-Pubmed      & multi-class& 19,717      & 44,338      & 500       & 3  & 0.003  \\
-PPI         & multi-label& 56,944      & 818,716     & 50    & 121 & 0.79      \\
-Yelp        & multi-label& 716,847     & 6,977,410   & 300  & 100 & 0.75       \\
-Amazon      & multi-class& 2,449,029   & 61,859,140  & 100  & 47 & 0.70        \\
-Friendster  & multi-class& 65,608,366 & 1,806,067,135 & 100 (random) & 500 & 0.001  \\
+  \vspace{-2mm}
+  \begin{center}\small
+  \caption{Summaey Of Biomedical Image Segmentation Datasets Used In Our Experiments}
+  \label{dataset-table}
+  \begin{tabular}{ccccc}
+    
+  \toprule
+  Dataset & Image & Input Size & Modality & Provider\\
+  \midrule
+  Cell & 30 & $512\times 512$  & EM      & ISBI 2012\cite{isbicell}   \\
+  Liver    & 4,000 & $512\times 512$       & CT     & MICCAI 2017 LiTS\cite{liver}  \\
+  DSB2018      & 670 & $256\times 256$      & EM      & Kaggle\cite{dsb2018} \\
+  COVID19         & 1,800 & $630\times 630$     & CT     & Web\cite{covid19,covid19_2}  \\
 \bottomrule    
-\end{tabular}
-\end{center}
-%\vspace{-0.35cm}
-\vspace{-4mm}
-\end{table}
+  \end{tabular}
+  \end{center}
+  %\vspace{-0.35cm}
+  \vspace{-4mm}
+  \end{table}
 
-\paragraph{Baselines and detailed setup}
-~\\
-~\\
-~\\
+\paragraph{Cell}
+The datset is the segmentation of neuronal structures in electron microscopic recordings.
+The dataset is provided by the EM segmentation challenge\cite{isbicell} that is started at ISBI 2012.
+The data is a set of 30 images ($512\times 512$ pixels) from serial section transmission electron
+microscopy of the Drosophila first instar larva ventral nerve cord (VNC). Each image comes with a corresponding fully annotated ground truth segmentation
+map for cells (white) and membranes (black).
 
-\begin{table}[ht]
-\begin{center}
-\caption{Results on Cora, Citeseer and Pubmed.}
-\label{transductive-table}
-\begin{tabular}{llll}
-\toprule
-Method & Cora & Citeseer & Pubmed \\
-\midrule
-GCN & 81.5 $\pm$ 0.6 & 71.3 $\pm$ 0.4 & 79.1 $\pm$ 0.4 \\
-GAT & 83.3 $\pm$ 0.8& 71.9 $\pm$ 0.7 & 78.0 $\pm$ 0.4\\
-GDC & 83.3 $\pm$ 0.2 & 72.2 $\pm$ 0.3 & 78.6 $\pm$ 0.4 \\
-APPNP & 83.3 $\pm$ 0.3 & 71.4 $\pm$ 0.6 & 80.1 $\pm$ 0.2 \\
-SGC    & 81.0 $\pm$ 0.1 & 71.8 $\pm$ 0.1 & 79.0 $\pm$ 0.1 \\
-LADIES& 79.6 $\pm$ 0.5 & 68.6 $\pm$ 0.3 & 77.0 $\pm$ 0.5 \\
-PPRGo & 82.4 $\pm$ 0.2 & 71.3 $\pm$ 0.3 & 80.0 $\pm$ 0.4 \\
-GraphSAINT& 81.3 $\pm$ 0.4 & 70.5 $\pm$ 0.4 & 78.2 $\pm$ 0.8 \\
-\midrule
-GBP  & \textbf{83.9 $\pm$ 0.7} & \textbf{72.9 $\pm$ 0.5} & \textbf{80.6 $\pm$ 0.4} \\
-\bottomrule
-\end{tabular}
-\end{center}
-\vspace{-0.35cm}
-\end{table}
+\paragraph{Nuclei}
+This dataset is a large number of segmented nuclei images\cite{dsb2018}
+and is created for the Kaggle 2018 Data Science Bowl and consists of 670 segmented nuclei images
+(\(256 \times 256\) pixels) from differenet modalities (brightfield vs. fluorescence). 
+We resized them to \(512 \times 512\) for our experiments.
 
-\paragraph{Inductive learning on medium to large graphs}
-~\\
-~\\
-~\\
+% \paragraph{Retinal Vessel} 
+% The dataset is 2D Digital Retinal Images for Vessel Extraction (DRIVE) retina vessel\cite{drive}: DRIVE 
+% contains 40 color pixels
 
-\begin{figure}[ht]
-\begin{center}
-\includegraphics[height=33mm]{ppi.pdf}
-\includegraphics[height=33mm]{yelp.pdf}
-\includegraphics[height=33mm]{amazon.pdf}
-\vspace{-2mm}
-\caption{Convergence curves of 4-layer models.} 
-\vspace{-2mm}
-\label{fig:convergence}
-\end{center}
-\vspace{-0.35cm}
-\end{figure}
+\paragraph{Liver}
+Liver tumor Segmentation Challenge (LiTS)\cite{liver} contain 131 contrast-enhanced CT images provided by hospital around the world with \(512 \times 512\) resolution.
+The ground truth segmentation provides two different labels: liver and lesion. For our experiments,
+we only consider liver as positive class and others as negative class.
 
-\paragraph{Transductive semi-supervised learning on billion-scale graph Friendster.}
-~\\
-~\\
-~\\
+
+\paragraph{COVID19}
+Dataset\cite{covid19} includes whole volumes and includes, therefore, both positive and negative slices 
+(373 out of the total of 829 slices have been evaluated by a radiologist as positive and segmented). 
+Dataset\cite{covid19_2} contains 20 CT scans of patients diagnosed with COVID-19 as well as segmentations of lungs and infections made by experts.
+These volumes are converted and normalized in a similar way as above, meanwhile we resize the data to $512\times 512$.
+
+\paragraph{Lung}
+Dataset\cite{covid19_2} also contains 20 CT scans of patients as well as segmentations of lungs made by experts with \(630 \times 630\) resolution.
+We converted and normalized in a similar way as above, meanwhile we resize the data to $512\times 512$.
+
+\subsection{Evaluation metrics}
+The experiments are implemented using the Pytorch framework. We use Adam optimizer\cite{Adam} as our
+models' optimizer with a learning rate of 0.00001, batch size of 2. All of datasets are splitted into training set and validation set with 
+the ratio of 8:2 using sklearn library. To numerically evaluate, we use five widely adopted metrics, \(i.e.\),
+the Dice similarity coefficient(Dice.), F1 score., Sensitivity(Sen.), Iou. and hausdorff distance(Hd)., the expressions of them are defined as follows:
+\begin{align}
+  \text { Sensitivity }=\frac{T P}{T P+F N}
+\end{align}
+\begin{align}
+  \operatorname{DSC}(G, S)=\frac{2|G \cap S|}{|G|+|S|}
+\end{align}
+\begin{align}
+  \operatorname{IOU}(G, S)=\frac{|G \cap S|}{|G| \cup|S|}
+\end{align}
+\begin{align}
+  F_{1}=2 \cdot \frac{\text { precision } \cdot \text { recall }}{\text { precision }+\text { recall }}
+\end{align}
+\begin{align}
+  h(G, S)=\max _{g \in G}\left\{\min _{c \in C}\|g-c\|\right\}
+\end{align}
+\subsection{Semantic Segmentation Results}
+For comparsion, we use five origianl network FCN with 32s\cite{fcn}, U-Net\cite{unet}, U-Net++\cite{unet++} , CE-Net\cite{cenet} and U-Net with Attention Gate\cite{attentiongate}
+to evaluate our proposaed method.
+
+
+  \begin{table}[ht]
+    \vspace{-2mm}
+    \begin{center}\small
+    \caption{Comparsion With Other Methods In Liver\cite{liver} Dataset}
+    \label{dataset-table}
+    \begin{tabular}{ccccccc}
+      
+    \toprule
+    Dataset & Shape Loss & Dice. & F1 score. & Iou. & Sens. & Hd.\\
+    \midrule
+    Our proposal & $\surd$ & \textbf{0.9392} & \textbf{0.9392} & \textbf{0.8965} & \textbf{0.9261} & \textbf{3.8854}\\
+    U-Net++ & $\times$ & 0.9351 & 0.9351 & 0.8781 & 0.9156 & 5.8218\\
+     Attention UNet & $\times$ & 0.9346 & 0.9346 & 0.8776 & 0.9056 & 4.836\\
+     CENet & $\times$ & 0.9315 & 0.9315 & 0.8721 & 0.9045 & 4.904\\
+     U-Net & $\times$ & 0.9253 & 0.9253 & 0.8615 & 0.9106 & 6.6785\\
+     FCN32s & $\times$ & 0.9065 & 0.9065 & 0.8300 & 0.9381 & 7.97\\
+  \bottomrule    
+    \end{tabular}
+    \end{center}
+    \vspace{-4mm}
+  \end{table}
+
+    
+  \begin{table}[ht]
+    \vspace{-2mm}
+    \begin{center}\small
+    \caption{Comparsion With Other Methods In Lung\cite{covid19_2} Dataset}
+    \label{dataset-table}
+    \begin{tabular}{ccccccc}
+      
+    \toprule
+    Dataset & Shape Loss & Dice. & F1 score. & Iou. & Sens. & Hd.\\
+    \midrule
+      Our proposal & $\surd$ & \textbf{0.9392} & \textbf{0.9392} & \textbf{0.8965} & \textbf{0.9261} & \textbf{10.19714}\\
+      UNet++ & $\times$ & 0.9351 & 0.9351 & 0.8781 & 0.9156 & 5.8218\\
+      Attention UNet & $\times$ & 0.9346 & 0.9346 & 0.8776 & 0.9056 & 4.836\\
+      CENet & $\times$ & 0.9315 & 0.9315 & 0.8721 & 0.9045 & 4.904\\
+      UNet & $\times$ & 0.9253 & 0.9253 & 0.8615 & 0.9106 & 6.6785\\
+      FCN32s & $\times$ & 0.9065 & 0.9065 & 0.8300 & 0.9381 & 7.97\\
+  \bottomrule    
+    \end{tabular}
+    \end{center}
+    %\vspace{-0.35cm}
+    \vspace{-4mm}
+  \end{table}
+
 
 \section{Conclusion}
 ~\\
@@ -198,5 +200,5 @@ GBP  & \textbf{83.9 $\pm$ 0.7} & \textbf{72.9 $\pm$ 0.5} & \textbf{80.6 $\pm$ 0.
 ~\\
 
 \bibliographystyle{abbrv}
-\bibliography{E:/studio/learn/python/src/bench/bibtex/complete.bib}
+\bibliography{complete.bib}
 \end{document}
