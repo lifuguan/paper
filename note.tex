@@ -1,5 +1,5 @@
 \documentclass[UTF8]{article} % chinese
-% \usepackage{ctex}
+\usepackage{ctex}
 %\documentclass{article}     %english
 %\usepackage[nonatbib]{neurips}
 \usepackage[final]{aneurips}
@@ -194,9 +194,9 @@ the Dice similarity coefficient(Dice.), F1 score., Sensitivity(Sen.), Iou. and h
 \begin{align}
   h(G, S)=\max _{g \in G}\left\{\min _{c \in C}\|g-c\|\right\}
 \end{align}
-\subsection{Semantic Segmentation Results}
+\subsection{Medical image Segmentation Results}
 For comparsion, we use five origianl network FCN with 32s\cite{fcn}, U-Net\cite{unet}, U-Net++\cite{unet++} , CE-Net\cite{cenet} and U-Net with Attention Gate\cite{attentiongate}
-to evaluate our proposaed method.
+to evaluate our proposaed method. 
 \begin{figure}[ht]
   \begin{center}
   \includegraphics[width=0.99\textwidth]{result.pdf}
