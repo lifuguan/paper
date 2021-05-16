@@ -94,19 +94,18 @@ Graph Neural Networks (GNN) is an emerging field for learning on non-Euclidean d
 
 \begin{figure}[ht]
   \begin{center}
-  \includegraphics[width=0.9\textwidth]{Attention.pdf}
+  \includegraphics[width=0.9\textwidth]{Attention.pdf}  
+  \label{fig:Attention}
   \vspace{-2mm}
   \caption{Illustration of SRA Attention Block.} 
   \vspace{-2mm}
-  \label{fig:Attention}
-  \end{center}
+\end{center}
   \vspace{-0.35cm}
 \end{figure}
 
 \begin{table}[H]
   \vspace{-2mm}
   \begin{center}\small
-  \caption{Memorize Cost Comparison With Different Methods In Bottleneck}
   \label{param-table}
   \begin{tabular}{ccccccc}
     
@@ -118,7 +117,8 @@ Graph Neural Networks (GNN) is an emerging field for learning on non-Euclidean d
     ResU-Net & SAR+MRC+RMP & 94,669,505 & 361.14  \\
 \bottomrule    
   \end{tabular}
-  \end{center}
+  \caption{Memorize Cost Comparison With Different Methods In Bottleneck}
+\end{center}
   %\vspace{-0.35cm}
   \vspace{-4mm}
 \end{table}
@@ -137,7 +137,6 @@ computed tomography (CT), and magnetic resonance imaging (MRI).  Table \ref{data
 \begin{table}[ht]
   \vspace{-2mm}
   \begin{center}\small
-  \caption{Summaey Of Biomedical Image Segmentation Datasets Used In Our Experiments}
   \label{dataset-table}
   \begin{tabular}{ccccc}
     
@@ -150,7 +149,8 @@ computed tomography (CT), and magnetic resonance imaging (MRI).  Table \ref{data
   COVID19         & 1,800 & $630\times 630$     & CT     & Web\cite{covid19,covid19_2}  \\
 \bottomrule    
   \end{tabular}
-  \end{center}
+  \caption{Summaey Of Biomedical Image Segmentation Datasets Used In Our Experiments}
+\end{center}
   %\vspace{-0.35cm}
   \vspace{-4mm}
   \end{table}
@@ -207,13 +207,16 @@ to evaluate our proposaed method.
   \end{center}
   \vspace{-0.35cm}
 \end{figure}
-\subsubsection{Performance in Cell segmentation task}
-Segmentation results of cell segmentation are shown in table\ref{cell-table}, 
 
+我们利用U-Net，ResU-Net作为baseline，与我们提出的模型分别在Cell，Liver，COVID19三个数据集上进行对比
+，每次实验所使用的参数，训练集，验证集，测试集均相同。
+Segmentation results of cell segmentation are shown in tables \ref{cell-table}，在Dice. and F1 score指数上相比于
+CE-Net, U-Net++, U-Net with Attention Gate, U-Net and FCN32s分别提升了1.30\%, 1.49\%, 4.35\%, 6.11\% and 16.95\%.
+在Iou.指数上，分别提升了2.05\%, 2.27\%, 6.08\%, 7.30\% and 19.70\%. 在Sens.指数上分别提升了9.80\%, 6.53\%, 7.39\%, 
+11.81\% and 15.36\%. 在Hd.指数上分别降低了-0.4074, -0.9083, -0.7471, -0.8825 and -2.4968.
   \begin{table}[H]
     \vspace{-2mm}
     \begin{center}\small
-    \caption{Comparsion With Other Methods In Cell\cite{dsb2018} Dataset}
     \label{cell-table}
     \begin{tabular}{ccccccc}
       
@@ -228,18 +231,19 @@ Segmentation results of cell segmentation are shown in table\ref{cell-table},
       FCN32s & $\times$ & 0.6895 & 0.6895 & 0.5653 & 0.7760 & 7.1192\\
   \bottomrule    
     \end{tabular}
-    \end{center}
+    \caption{Comparsion With Other Methods In Cell\cite{dsb2018} Dataset}
+  \end{center}
     %\vspace{-0.35cm}
     \vspace{-4mm}
   \end{table}
 
-  \subsubsection{Performance in liver segmentation task}
-Segmentation results of cell segmentation are shown in table\ref{liver-table}, 
-
+Segmentation results of cell segmentation are shown in table\ref{liver-table}, 在Dice. and F1 score指数上相比于
+CE-Net, U-Net++, U-Net with Attention Gate, U-Net and FCN32s分别提升了2.01\%, 2.05\%, 2.36\%, 2.98\% and 4.86\%.
+在Iou.指数上，分别提升了3.84\%, 3.89\%, 4.44\%, 5.50\% and 8.65\%. 在Sens.指数上分别提升了2.33\%, 3.33\%, 3.44\%, 
+2.83\% and 0.08\%. 在Hd.指数上分别降低了-1.9362, -0.9506, -1.0186, -2.7931 and -4.0846.
   \begin{table}[H]
     \vspace{-2mm}
     \begin{center}\small
-    \caption{Comparsion With Other Methods In Liver\cite{liver} Dataset}
     \label{liver-table}
     \begin{tabular}{ccccccc}
       
@@ -254,19 +258,20 @@ Segmentation results of cell segmentation are shown in table\ref{liver-table},
      FCN32s & $\times$ & 0.9065 & 0.9065 & 0.8300 & 0.9381 & 7.97\\
   \bottomrule    
     \end{tabular}
-    \end{center}
+    \caption{Comparsion With Other Methods In Liver\cite{liver} Dataset}
+  \end{center}
     \vspace{-4mm}
   \end{table}
 
-  
-
-  \subsubsection{Performance in covid19 lesion segmentation task}
-  Segmentation results of cell segmentation are shown in table\ref{covid19-table}, 
+  Segmentation results of cell segmentation are shown in table\ref{covid19-table}, 在Dice. and F1 score指数上相比于
+  CE-Net, U-Net++, U-Net with Attention Gate, U-Net and FCN32s分别提升了1.41\%, 4.75\%, 2.60\%, 6.15\% and 10.80\%.
+  在Iou.指数上，分别提升了1.67\%, 6.58\%, 3.84\%, 8.40\% and 14.12\%. %在Sens.指数上分别提升了2.33\%, 3.33\%, 3.44\%, 2.83\% and 0.08\%. 
+  在Hd.指数上分别降低了-0.4581, -0.7171, -0.5715, -0.9101 and -1.5514. 敏感度方面，通过观察Figure \ref{fig:result}我们可以发现
+  ，其在分割目标图像时更加保守（改）。
 
   \begin{table}[H]
     \vspace{-2mm}
     \begin{center}\small
-    \caption{Comparsion With Other Methods In COVID19\cite{covid19_2} Dataset}
     \label{covid19-table}
     \begin{tabular}{ccccccc}
       
@@ -281,38 +286,14 @@ Segmentation results of cell segmentation are shown in table\ref{liver-table},
       FCN32s & $\times$ & 0.7409 & 0.7409 & 0.6045 & 0.9935 & 5.8644\\
   \bottomrule    
     \end{tabular}
-    \end{center}
+    \caption{Comparsion With Other Methods In COVID19\cite{covid19_2} Dataset}
+  \end{center}
     %\vspace{-0.35cm}
     \vspace{-4mm}
   \end{table}
 
-  \subsubsection{Performance in lung segmentation task}
-  Segmentation results of cell segmentation are shown in table\ref{lung-table}, 
-    
-  \begin{table}[H]
-    \vspace{-2mm}
-    \begin{center}\small
-    \caption{Comparsion With Other Methods In Lung\cite{covid19_2} Dataset}
-    \label{lung-table}
-    \begin{tabular}{ccccccc}
-      
-    \toprule
-    Methods & Shape Loss & Dice. & F1 score. & Iou. & Sens. & Hd.\\
-    \midrule
-      Our proposal & $\surd$ & \textbf{0.9392} & \textbf{0.9392} & \textbf{0.8965} & \textbf{0.9261} & \textbf{10.19714}\\
-      UNet++ & $\times$ & 0.9351 & 0.9351 & 0.8781 & 0.9156 & 5.8218\\
-      Attention UNet & $\times$ & 0.9346 & 0.9346 & 0.8776 & 0.9056 & 4.836\\
-      CENet & $\times$ & 0.9315 & 0.9315 & 0.8721 & 0.9045 & 4.904\\
-      UNet & $\times$ & 0.9253 & 0.9253 & 0.8615 & 0.9106 & 6.6785\\
-      FCN32s & $\times$ & 0.9065 & 0.9065 & 0.8300 & 0.9381 & 7.97\\
-  \bottomrule    
-    \end{tabular}
-    \end{center}
-    %\vspace{-0.35cm}
-    \vspace{-4mm}
-  \end{table}
-  
-
+  综上所述，我们的模型在三个数据集上均consistently outperforms CE-Net and U-Net with Attention-Gate. Figure \ref{fig:result}展示了我们
+  在三个数据集上与其余5个模型的对比示例。COVID-19 ······， Liver ·······， Cell ·······。
 
   \subsection{Ablation study}
   To justify the effectiveness of the pretrained U-Net\cite{unet}, Res-UNet\cite{ResUNet}, 
@@ -323,7 +304,6 @@ Segmentation results of cell segmentation are shown in table\ref{liver-table},
   \begin{table}[H]
     \vspace{-2mm}
     \begin{center}\small
-    \caption{Comparsion With Other loss functions In COVID19\cite{covid19} Dataset}
     \label{loss-table}
     \begin{tabular}{ccccccc}
       
@@ -335,7 +315,8 @@ Segmentation results of cell segmentation are shown in table\ref{liver-table},
       Our proposal & Ours         & 0.8489 & 0.8489 & 0.7457 & 0.8570 & 4.4313\\
   \bottomrule    
     \end{tabular}
-    \end{center}
+    \caption{Comparsion With Other loss functions In COVID19\cite{covid19} Dataset}
+  \end{center}
     %\vspace{-0.35cm}
     \vspace{-4mm}
   \end{table}
@@ -343,7 +324,6 @@ Segmentation results of cell segmentation are shown in table\ref{liver-table},
   \begin{table}[H]
     \vspace{-2mm}
     \begin{center}\small
-    \caption{Ablation study for each component on COVID19 dataset}
     \label{loss-table}
     \begin{tabular}{ccccccc}
       
@@ -358,7 +338,8 @@ Segmentation results of cell segmentation are shown in table\ref{liver-table},
       ResU-Net+SAR+MRC+RMP & Ours & \textbf{0.8489} & \textbf{0.8489} & \textbf{0.7457} & \textbf{0.8570} & \textbf{4.313}\\
   \bottomrule    
     \end{tabular}
-    \end{center}
+    \caption{Ablation study for each component on COVID19 dataset}
+  \end{center}
     %\vspace{-0.35cm}
     \vspace{-4mm}
   \end{table}
@@ -367,7 +348,7 @@ Segmentation results of cell segmentation are shown in table\ref{liver-table},
     \begin{center}
     \includegraphics[width=0.6\textwidth]{covid_comparison.pdf}
     \vspace{-2mm}
-    \caption{Fig 1 shows ; Fig 2 shows; Fig 3 shows; Fig 4 shows;Fig5 shows.} 
+    \caption{Metric results of COVID19 segmentation compared with different models.} 
     \vspace{-2mm}
     \label{fig:covid_comparison}
     \end{center}
@@ -377,7 +358,6 @@ Segmentation results of cell segmentation are shown in table\ref{liver-table},
   \begin{table}[H]
     \vspace{-2mm}
     \begin{center}\small
-    \caption{Ablation study for each component on Cell dataset}
     \label{loss-table}
     \begin{tabular}{ccccccc}
       
@@ -393,6 +373,7 @@ Segmentation results of cell segmentation are shown in table\ref{liver-table},
       ResU-Net+SAR+MRC+RMP & Ours & \textbf{0.8588} & \textbf{0.8588} & \textbf{0.7623} & \textbf{0.9296} & \textbf{4.6224}\\
   \bottomrule    
     \end{tabular}
+    \caption{Ablation study for each component on Cell dataset}
     \end{center}
     %\vspace{-0.35cm}
     \vspace{-4mm}
@@ -402,7 +383,7 @@ Segmentation results of cell segmentation are shown in table\ref{liver-table},
     \begin{center}
     \includegraphics[width=0.6\textwidth]{cell_comparison.pdf}
     \vspace{-2mm}
-    \caption{Fig 1 shows ; Fig 2 shows; Fig 3 shows; Fig 4 shows;Fig5 shows.} 
+    \caption{Metric results of Cell segmentation compared with different models.} 
     \vspace{-2mm}
     \label{fig:cell_comparison}
     \end{center}
