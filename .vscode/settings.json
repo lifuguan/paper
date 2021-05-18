@@ -1,6 +1,6 @@
 {
     "jupyter.jupyterServerType": "local",
-    {
+    
         "latex-workshop.latex.autoBuild.run": "onFileChange",
         "latex-workshop.showContextMenu": true,
         "latex-workshop.intellisense.package.enabled": true,
