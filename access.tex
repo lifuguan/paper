@@ -44,7 +44,14 @@ Commerce under Grant BS123456.''}
 \corresp{Corresponding author: First A. Author (e-mail: author@ boulder.nist.gov).}
 
 \begin{abstract}
-blablabla
+  In recently years, deep learning-based models brought about performance breakthrough  in medical image community. For image segmentation, registration and reconstruction tasks, 
+  deep models consistently outperforms traditional methods. Specifically, the U-Net model proposed by Olaf Ronneberger et al.\cite{RonnebergerFB15} and some variants are becoming the de facto standard model and widely 
+  used in various medical image tasks. Despite great success, it is still a challenge task to accurately segment and identify the location and sizes of rectal tumors. 
+  Another challenge is the amorphous or irregularly shaped boundaries of object. In this study, we propose a novel U-Net architecture to address the aforementioned issues regarding segment performance 
+  and shape identification. our model mainly includes two improvements on U-Net. Firstly, we re-design the skip pathways with spatial and channel attentions which reduce the semantic gap between 
+  the feature maps of encoder and decoder sub-networks. Secondly, a novel loss function was proposed to emphasize the segmentation accuracy on tumor boundaries and encourages shape feature preservation. 
+  We have evaluated the ASU-Net in comparison with U-Net and some variants on multiple medical image segmentation tasks: liver segmentation in abdominal CT scans, nodule segmentation in the low-dose CT scans. 
+  Based on the experimental results, it was identified that the proposed method performed a significant role in improving accuracy and shape preservation.
 \end{abstract}
 
 \begin{keywords}
@@ -57,20 +64,70 @@ U-Net, Biomedical image segmentation, Attention
 
 \section{Introduction}
 \label{sec:introduction}
-\PARstart{T}{his} document 
+% 深度学习在医疗领域里获得了成功的应用.
+\PARstart{M}{edical}  images of different modality such as tomography (CT), positron emission tomography (PET), X-ray, Ultrasonic, and singlephoton emission computed tomography (SPECT) play an increasingly important role for clinician to analyse and diagnosis of diseases. For example, Diabetic Retinopathy (DR), which  is a universal retinal disease caused by elevated blood sugar, accompanied by retinal vascular swelling. Early detection and treatment are the keys to determine the degree and severity of vitreoretinal traction. Ultrasound is a valuable diagnostic tool for this disease, which can evaluate the state of the retina in vitreous hemorrhage or vitreous opacity.
+%Automated medical image analysis has been extensively studied in the medical imaging community due to the fact that manual labelling of large amounts of medical images is a tedious and error-prone task.
 
-\section{Method}
-\subsection{Network Architecture}
 \begin{figure*}[htbp]
-    \xdef\xfigwd{\textwidth}% 通栏浮动体，把它定义为 \textwidth
-    \centering
-    \includegraphics[width=0.9\textwidth]{figure/overview.pdf}
-    \label{fig:overview}
-    \caption{Illustration of our proposed network.}
+  \xdef\xfigwd{\textwidth}% 通栏浮动体，把它定义为 \textwidth
+  \centering
+  \includegraphics[width=0.9\textwidth]{figure/segment_small_structures.png}
+  \label{fig:segment_small_structures}
+  \caption{small structure segmentation.}
 
 \end{figure*}
 
-\subsection{Bottleneck Modules}
+In general, medical image analysis including image segmentation, object detection and tracking tasks can be categorized into two classes. (1) manual and semi-automatic segmentation, (2) automatic segmentation.  The traditional manual analysis requires physicians, radiologists, or experts with advanced technical knowledge to carry out the tasks. Furthermore, the segmentation quality relies heavily on the judgement of experts. The segmentation and diagnosis process is rather time-consuming and error-prone. In the past few decades, researchers have proposed a great number of methods for automatic segmentation, detection and tracking in Medical Image Community. Early methods were based on traditional pattern recognition techniques like statistical modeling and edge detection filters. For example, Bankhead et al\cite{PeterNGT12} proposed a wavelet-based method to enhance the detection of vessel foreground and background. Later, machine learning approaches using hand-crafted features based on the modality and type of segmentation task were developed. For instance, Lupascu et al. \cite{LupascuTT10} designed 41-$D$ feature vectors for every pixel to train the AdaBoost classifier to classify each pixel in the retinal images. 
+%However, the manual annotating of retinal vessels by ophthalmologists is a slow and laborintensive task, so researchers have devoted themselves to proposing automatic retinal vessel segmentation methods
+
+With the advent of deep learning, convolutional neural networks (CNNs) have been showing promising results over the conventional methods in medical image tasks like image segmentation, registration and tracking and so on. Medical image segmentation is an important task of artificial intelligence assisted medical technology. The automatic segmentation of medical image not only help clinician identify the candidate regions, but also give helpful diagnosis suggestions. During the past decade, many effective models have been developed by researchers. The classic model is fully convolutional network (FCN) proposed by Jonathan Long et al\cite{LongSD15}. Fully convolutional networks (FCN) take advantage of fully convolutional layers to train a segmentation model in an end-to-end way by replacing fully connected layers in CNN with convolutional layers. Despite outstanding performances, FCN suffers from conceptual limitations in complex segmentation tasks, e.g. when dealing with local visual ambiguities and low contrast between organs. Since then,  several variants have been developed for medical image segmentation tasks like SegNet, U-Net and so on. What is worth noting is that most architectures developed for semantic segmentation in both computer vision and medical medical images are encoder-decoder type convolutional networks. SegNet was the first encoder-decoder type convolution networks. A major breakthrough in medical image segmentation was U-Net architecture proposed by Olaf Ronneberger\cite{RonnebergerFB15} which has recently become backbone of almost all the leading models. Subsequently, a variety of network architectures based on U-Net are proposed to enhance the segmentation performance. Several main extensions includes UNet++, Attention Gate UNet, UNet-Transformer, Double U-Net, TVUNet and so on. In addition, extensions like 3D U-Net and V-Net are also proposed for volumetric segmentation in 3D medical scans. It is worth noting that all the above extensions of U-Net used the same encoder-decoder architecture and their contributions were either in encoder and decoder, using different convolutional layer or in skip connections, using different concatenation to combine the features in appropriate level. 
+%Although deep learning demonstrates increasing applications, the lack of annotated medical image data results in difficulty in successfully deploying CNNs in the clinics.
+
+% 存在的问题
+Despite the success of U-Net and its variants,  there are some disadvantages of above networks. In general, U-Net and its variants are good at segmenting large structure, they fail when the segment objects are small or have noisy boundaries which can be seen in Fig \ref{fig:segment_small_structures}. From the figure above, the U-Net architecture lacks focus in extracting features for segmentation of small structures. 
+
+In addition, UNet network also faces the challenge to segment objects with enough good accuracy for retina segmentation due to 
+shape variability and unclear boundaries of segmenting objects. In encoder part of network, feature extraction process is often performed by CNN networks which are are highly influenced by dense pixel values which are not robust features compared to shapes of objects. From the perspective of evaluation,  most segmentation evaluation metrics to quantify segmentation performance, such as accuracy, spedificity, and jaccard similarity, do not directly reflect how well a object boundary is delineated which hinders to segment object with clear boundaries. Last but not least,  UNet architecture family also shared the disadvantage by deep neural network is a lack of interpretability. 
+
+% 本文的解决方法
+To address the issues illustrated above in medical image segmentation, in this paper, we proposed a new UNet variant named SA-UNet. The proposed model is inspired by growing interest on integrating attention mechanisms and shape-aware feature preservation in image segmentation networks for natural scenes. Attention mechanism has been shown to be a powerful technique in deep learning models and has been widely used in various tasks in natural language processing to capture keywords for context. Unlike the previous approaches, SA-UNet re-design the skip-connection to fuse several different attention mechanisms including spatial attention, channel-wise attention and self-attention. Spatial attention focus on some special region which contains the objects to be segmented; channel-wise attention vector are employed in the lower resolution to extract feature in some channel. self-attention effectively captures the long-range dependencies between visual features. Despite the growing interest on integrating attention mechanisms in medical image segmentation scenes, the adoption of several attention mechanisms in medical images remains scarce, being limited to simple attention models. Furthermore, we also consider shape-feature perservation in feature extraction procedure in imporved implemenation in the loss function.  The shapes of objects should be learned to allow generalizability and robustness of the model which goes hand-in-hand with transparency which also increases the interpretability in a clinical setting. There are several advantages of our proposed architectures for segmentation task. Fristly, The new model augmented with multi-attention improves the performance in a variety of  segmentation tasks. Secondly new loss function contributes to the shape preservation of objects to be segmented. The experimental results show superior performance on segmentation tasks compared to equivalent models including U-Net and serveral variants. 
+
+% 本文主要贡献
+The contributions of this work can be summarized as follows:
+\begin{enumerate}
+  \item We propose a novel multi-attention module that can be utilised in CNN based standard image analysis models for classification, segmentation and tracking application and so on.
+  \item We redesign the skip-connection to fuse different attention mechanisms and proposed the SAU-Net architecture for medical image segmentation task. 
+  \item The architecture use new loss function for shape preservation for medical image analysis, in particular, in the context of image classification and segmentation.
+\end{enumerate}
+  
+  % Paper structure.
+The remainder of this paper is organized as follows.. In Section \ref{sec:related}, we introduce background knowledge, including U-Net architecture family, existing attention mechanism and shape-aware related work in machine learning fields. Section \ref{sec:method} introduce the proposed method, including network architecture and attention modules and new loss function to preserve the shape feature. in Section \ref{sec:experiment}, we give some experiment and present the results in detail and section \ref{sec:conc} conclude the paper.
+  
+% 本文提出的方法详细阐述
+\section{Proposed Method}\label{sec:method}
+Our novel architecture is inspired from the attention UNet, which uses attention to give importance to a certain region out
+of the entire image.
+
+这里描述提出的方法，先描述模型整理，然后再描述模型的部分和细节内容。有些内容用数学语言来进行阐述。
+
+Different from the original UNet architecture we have used attention gates which take the features from the encoder and the output of the pyramid pool as input and produced out-put is further concatenated with the up-sampled output of the previous pyramid-pool layer and mapped to the next subsequent layer. This network can map local features with their global counterparts with improved accuracy and emphasize on discriminative image regions by focusing on relevant local features only.
+
+\begin{figure*}[htbp]
+  \xdef\xfigwd{\textwidth}% 通栏浮动体，把它定义为 \textwidth
+  \centering
+  \includegraphics[width=0.9\textwidth]{figure/overview.pdf}
+  \label{fig:overview}
+  \caption{Illustration of our proposed network.}
+
+\end{figure*}
+
+\subsection{EA-UNet}
+
+There are two commonly used attention types: multiplicative (Luong et al., 2015) and additive attention (Bahdanau et al., 2014). The former is faster to compute and more memory-efficient in practice since it can be implemented as a
+matrix multiplication. However, additive attention is experimentally shown to be performing better for large dimensional input features (Britz et al., 2017). For this reason, we use the latter to obtain the gating coefficient as can be seen in Figure 2, which is formulated as follows:
+
+\subsection{Attention Ensemble}
+
 在语义分割任务中，deep convolutional layers已经展现出其对提取图像特征的重要性。等人提出了CE-Net\cite{cenet}，其在Bottleneck采用了DeepLab中的SPP-Block
 
 \begin{table}[htbp]
@@ -317,12 +374,14 @@ CE-Net, U-Net++, U-Net with Attention Gate, U-Net and FCN32s分别提升了2.01\
 
 
   \subsection{Modules}
-  为了进一步验证我们设计的各个模块是否对分割任务有提升作用，我们将MRC Block, RMP Block, SRA Attention Block和shape loss function与ResU-Net分别进行组合：
+  Our proposed method is based on ResU-Net and our high level feature extractor is based on CE-Net, therefore ResU-Net as well as CE-Net are the most fundamental baseline model.
+  To further verify that the modules designed by ourselves are making contribute to segmentation task，
+  we combined MRC Block, RMP Block, SRA Attention Block and shape loss function with ResU-Net individually：
   \begin{itemize}
-      \item ResU-Net + MRC + RMP: to verify if this blocks can really 提升对深层图像特征的提取能力
-      \item ResU-Net + SAR Attention Module: to verify if our Attention module can 更好地从spatial and channels角度enhanced pixel-wised segmentation than skip connection as well as
+      \item ResU-Net + MRC + RMP: to verify wheather these blocks can ehance the capacity to extract deep image features or not.
+      \item ResU-Net + SAR Attention Module: to verify if our Attention module can enhance pixel-wised segmentation from spatial and channels dimensions than skip connection as well as
             attention-gate.
-      \item ResU-Net + MRC + RMP +SAR: 分别使用\(loss_{BCE}\) and \(loss_{overall}\)来进行训练，用于验证组合模型的有效性。
+      \item ResU-Net + MRC + RMP +SAR: We use \(loss_{BCE}\) and \(loss_{overall}\) for our model training seperatly, which can enable us to verify the effectiveness of our model。
   \end{itemize}
 
   \begin{table*}[htbp]
@@ -372,9 +431,10 @@ CE-Net, U-Net++, U-Net with Attention Gate, U-Net and FCN32s分别提升了2.01\
   \end{figure}
   ResU-Net with both SRA attention module and MRC, RMP module对比于ResU-Net,Iou.指标提升了3.24\%, F1 score指标提升了2.11\%, Dice指标提升了2.11\%, Sensitivity指标提升了0.59\%, Hd指标降低了0.6651。
   ResU-Net with both SRA attention module and MRC with the combination of shape loss function, 
-  RMP module对比于ResU-Net,Iou.指标提升了3.49\%, F1 score指标提升了2.74\%, Dice指标提升了2.74\%, Sensitivity指标降低了3.89\%, Hd指标降低了0.9637。
+  Compared RMP module to ResU-Net,Iou.指标提升了3.49\%, F1 score指标提升了2.74\%, Dice指标提升了2.74\%, Sensitivity指标降低了3.89\%, Hd指标降低了0.9637。
   
   \paragraph{Cell ablation study result}
+  We further compare our components's performance on Cell dataset.
   我们将上述模型在Cell数据集上进行测试并对比其IoU, F1 score, Dice, Sensitivity and Hd value. 每次实验所使用的参数，训练集，验证集，测试集均相同。
   如图\ref{fig:cell_comparison}和表\ref{ablation-table}所示：
   ResU-Net with MRC block and RMP block 对比于ResU-Net,Iou.指标提升了1.40\%, F1 score指标提升了1.34\%, Dice指标提升了1.34\%, Sensitivity指标提升了0.29\%, Hd指标降低了0.5214。
